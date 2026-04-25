@@ -4,7 +4,20 @@ from PIL import Image
 import math
 
 
+# threshold value = 20
 
+def read_image(file_path):
+    im = Image.open('penguins.jpg')
+    pix = im.load()
+    width = im.size[0]
+    height = im.size[1]
+    rgba = pix[width, height]
+    
+    
+    
+
+    
+    
 
 
 
