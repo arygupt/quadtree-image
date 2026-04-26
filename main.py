@@ -21,12 +21,21 @@ def is_uniform(FILE_PATH, x, y, width, height, threshold=20):
                 return False
     return True
     
+   
+def split_if_uniform():
+    img = Image.open(FILE_PATH)
+    width, height = img.size
     
-
 def main():
-    print("Hello from quadtree-image!")
+    img = Image.open(FILE_PATH)
+    width, height = img.size
+    
+    crop_box = (0, width/2, height/2, )
     
     
+    
+    cropped_img = img.crop(crop_box)
+    cropped_img.show()
 
 
 
