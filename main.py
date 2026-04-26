@@ -4,26 +4,24 @@ from PIL import Image
 import math
 
 
-# threshold value = 20
+FILE_PATH = 'penguins.jpg'
 
-def read_image(file_path):
-    im = Image.open('penguins.jpg')
-    pix = im.load()
-    width = im.size[0]
-    height = im.size[1]
-    rgba = pix[width, height]
+
+# if it is uniform, that entire thing can be represented by one color
+def is_uniform(FILE_PATH, x, y, width, height, threshold=20):
+    first_pixel = FILE_PATH.getpixel((x, y))
+    r0, g0, b0 = first_pixel
+    for row in range(y, y + height):
+        for col in range(x, x + height):
+            r, g, b = FILE_PATH.getpixel((col, row))
+            
+            difference = abs(r - r0) + abs(g - g0) + abs(b - b0)
+            
+            if difference > threshold:
+                return False
+    return True
     
     
-    
-
-    
-    
-
-
-
-
-
-
 
 def main():
     print("Hello from quadtree-image!")
