@@ -29,7 +29,7 @@ class QuadtreeNode:
         ...
 
 
-
+  
 class QuadtreeCompressor:
     def __init__(self, path, threshold=20):
         self.path = path
@@ -65,11 +65,28 @@ class QuadtreeCompressor:
             color = self.average_color(x, y, width, height)
             return QuadtreeNode(x, y, width, height, color=color)
         children = tuple(
+            # recursively split
             self.build_tree(child_x, child_y, child_w, child_h)
             for child_x, child_y, child_w, child_h in self.split_regions(x, y, width, height)
         )
         return QuadtreeNode(x, y, width, height, children=children)
+    
+    def average_color(self, x: int, y: int, width: int, height: int) -> tuple[int, int, int]:
+        img = Image.open(FILE_PATH)
+        rgb_im = img.convert('RGB')
+        r0 = 0
+        b0 = 0
+        g0 = 0
 
+        for i in range(x, x + width):
+            for j in range(y, y + height):
+                r, g, b = rgb_im.getpixel((i, j))
+                r0 += r
+                g0 += g
+                b0 += b 
+        return (r0 // (width * height ), g0 // (width  * height), b0 // (width * height))
+
+        
 
 """
 class QuadtreeCompressor:
