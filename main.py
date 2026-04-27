@@ -7,7 +7,27 @@ FILE_PATH = 'penguins.jpg'
 
 
 class QuadtreeNode:
-    pass
+    def __init__(
+        self,
+        x: int,
+        y: int,
+        width: int,
+        height: int,
+        color: tuple[int, int, int] | None = None,
+        children: tuple["QuadtreeNode", "QuadtreeNode", "QuadtreeNode", "QuadtreeNode"] | None = None,
+    ):
+        ...
+
+    def is_leaf(self) -> bool:
+        ...
+
+    def to_dict(self) -> dict:
+        ...
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "QuadtreeNode":
+        ...
+
 
 
 class QuadtreeCompressor:
@@ -27,44 +47,73 @@ class QuadtreeCompressor:
                     return False
         return True
 
-    def split_if_uniform(self, x=0, y=0, width=None, height=None):
-        # Uniform region: no split. Else four quadrants: TL, TR, BL, BR.
-        w = self.image.width if width is None else width
-        h = self.image.height if height is None else height
-        if self.is_uniform(x, y, w, h):
-            return None
-        w1, w2 = w // 2, w - w // 2
-        h1, h2 = h // 2, h - h // 2
-        if w1 < 1 or w2 < 1 or h1 < 1 or h2 < 1:
-            return None
-        img = self.image
-
-        def crop_at(xx, yy, ww, hh):
-            return img.crop((xx, yy, xx + ww, yy + hh))
-
+    def split_regions(self, x, y, width, height):
+        w1, w2 = width // 2, width - width // 2
+        h1, h2 = height // 2, height - height // 2
         return (
-            crop_at(x, y, w1, h1),
-            crop_at(x + w1, y, w2, h1),
-            crop_at(x, y + h1, w1, h2),
-            crop_at(x + w1, y + h1, w2, h2),
+            (x, y, w1, h1),                  # topleft
+            (x + w1, y, w2, h1),             # topright
+            (x, y + h1, w1, h2),             # bottom left
+            (x + w1, y + h1, w2, h2),        # bottom right
         )
+    def build_tree(self, x=0, y=0, width=None, height=None):
+        if width is None:
+            width = self.image.width
+        if height is None:
+            height = self.image.height
+        if self.is_uniform(x, y, width, height) or width == 1 or height == 1:
+            color = self.average_color(x, y, width, height)
+            return QuadtreeNode(x, y, width, height, color=color)
+        children = tuple(
+            self.build_tree(child_x, child_y, child_w, child_h)
+            for child_x, child_y, child_w, child_h in self.split_regions(x, y, width, height)
+        )
+        return QuadtreeNode(x, y, width, height, children=children)
 
 
-class QuadtreeDecompressor:
-    pass
+"""
+class QuadtreeCompressor:
+    def __init__(self, path: str, threshold: int = 20):
+        ...
+
+    def is_uniform(self, x: int, y: int, width: int, height: int) -> bool:
+        ...
+
+    def average_color(self, x: int, y: int, width: int, height: int) -> tuple[int, int, int]:
+        ...
+
+    def build_tree(
+        self,
+        x: int = 0,
+        y: int = 0,
+        width: int | None = None,
+        height: int | None = None,
+    ) -> QuadtreeNode:
+        ...
+
+    def compress(self) -> QuadtreeNode:
+        ...
+
+    def save(self, output_path: str) -> None:
+        ...
+"""
 
 
 class ImageCodec:
-    pass
+    @staticmethod
+    def compress(input_path: str, output_path: str, threshold: int = 20) -> None:
+        ...
+
+    @staticmethod
+    def decompress(input_path: str, output_path: str) -> None:
+        ...
+
     
     
     
 def main():
+    QDT = QuadtreeCompressor(FILE_PATH)
     
-    img = Image.open(FILE_PATH)
-    width, height = img.size
-    right_top = img.crop((width/2, 0, width, height/2))
-    right_top.show()
 
 
 
