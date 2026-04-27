@@ -1,32 +1,10 @@
 # image processing 
 import numpy as np
 from PIL import Image
+from node import QuadtreeNode 
 
 
 FILE_PATH = 'penguins.jpg'
-
-
-class QuadtreeNode:
-    def __init__(
-        self,
-        x: int,
-        y: int,
-        width: int,
-        height: int,
-        color: tuple[int, int, int] | None = None,
-        children: tuple["QuadtreeNode", "QuadtreeNode", "QuadtreeNode", "QuadtreeNode"] | None = None,
-    ):
-        ...
-
-    def is_leaf(self) -> bool:
-        ...
-
-    def to_dict(self) -> dict:
-        ...
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "QuadtreeNode":
-        ...
 
 
   
@@ -39,17 +17,23 @@ class QuadtreeCompressor:
     def is_uniform(self, x, y, width, height):
         img = self.image
         r0, g0, b0 = img.getpixel((x, y))
+
+
         for row in range(y, y + height):
             for col in range(x, x + width):
                 r, g, b = img.getpixel((col, row))
                 difference = abs(r - r0) + abs(g - g0) + abs(b - b0)
+
                 if difference > self.threshold:
                     return False
         return True
 
     def split_regions(self, x, y, width, height):
+
         w1, w2 = width // 2, width - width // 2
         h1, h2 = height // 2, height - height // 2
+
+
         return (
             (x, y, w1, h1),                  # topleft
             (x + w1, y, w2, h1),             # topright
@@ -86,34 +70,11 @@ class QuadtreeCompressor:
                 b0 += b 
         return (r0 // (width * height ), g0 // (width  * height), b0 // (width * height))
 
-        
-
-"""
-class QuadtreeCompressor:
-    def __init__(self, path: str, threshold: int = 20):
-        ...
-
-    def is_uniform(self, x: int, y: int, width: int, height: int) -> bool:
-        ...
-
-    def average_color(self, x: int, y: int, width: int, height: int) -> tuple[int, int, int]:
-        ...
-
-    def build_tree(
-        self,
-        x: int = 0,
-        y: int = 0,
-        width: int | None = None,
-        height: int | None = None,
-    ) -> QuadtreeNode:
-        ...
-
-    def compress(self) -> QuadtreeNode:
-        ...
+    def compress(self) -> QuadTreeNode:
+        pass
 
     def save(self, output_path: str) -> None:
-        ...
-"""
+        pass
 
 
 class ImageCodec:
