@@ -1,0 +1,5 @@
+__pycache__/
+*.py[cod]
+
+# Generated output artifact (too large for regular Git history)
+penguins_compressed.json
