@@ -22,7 +22,10 @@ class QuadtreeCompressor:
         region = self.pixels[y:y + height, x:x + width]
         base_color = self.pixels[y, x]
         differences = np.abs(region - base_color).sum(axis=2)
-        return int(differences.max()) <= self.threshold
+        if int(differences.max()) <= self.threshold:
+            return True
+        else:
+            return False
 
     def split_regions(self, x: int, y: int, width: int, height: int):
         w1, w2 = width // 2, width - width // 2
@@ -35,14 +38,7 @@ class QuadtreeCompressor:
             (x + w1, y + h1, w2, h2),        # bottom right
         )
 
-    def build_tree(
-        self,
-        x=0,
-        y=0,
-        width=None,
-        height=None,
-        progress_bar=None,
-    ) -> QuadtreeNode:
+    def build_tree(self, x=0, y=0, width=None, height=None, progress_bar=None,) -> QuadtreeNode:
         if width is None:
             width = self.image.width
         if height is None:
@@ -86,11 +82,7 @@ class QuadtreeCompressor:
 
 class ImageCodec:
     @staticmethod
-    def compress(
-        input_path: str,
-        output_path: str,
-        threshold: int = 20,
-    ) -> None:
+    def compress(input_path: str, output_path: str, threshold: int = 20,) -> None:
         compressor = QuadtreeCompressor(input_path, threshold)
         compressor.save(output_path)
 
@@ -101,16 +93,16 @@ class ImageCodec:
 
         root = QuadtreeNode.from_dict(data)
         img = Image.new("RGB", (root.width, root.height))
-        ImageCodec._draw_node(img, root)
+        ImageCodec.draw_node(img, root)
         img.save(output_path)
 
     @staticmethod
-    def _draw_node(img: Image.Image, node: QuadtreeNode) -> None:
+    def draw_node(img: Image.Image, node: QuadtreeNode) -> None:
         draw = ImageDraw.Draw(img)
-        ImageCodec._draw_node_with_draw(draw, node)
+        ImageCodec.draw_node_with_draw(draw, node)
 
     @staticmethod
-    def _draw_node_with_draw(draw: ImageDraw.ImageDraw, node: QuadtreeNode) -> None:
+    def draw_node_with_draw(draw: ImageDraw.ImageDraw, node: QuadtreeNode) -> None:
         if node.is_leaf():
             draw.rectangle(
                 [
@@ -123,7 +115,7 @@ class ImageCodec:
             )
             return
         for child in node.children:
-            ImageCodec._draw_node_with_draw(draw, child)
+            ImageCodec.draw_node_with_draw(draw, child)
 
 
 def output_paths(input_path: str) -> tuple[str, str]:
