@@ -1,8 +1,8 @@
 # Quadtree Compression Algorithm
  - A quick and dirty implementation of the quadtree compression algorithm in Python
  - Beneficial to install uv. 
- - Uses a progress bar in command-line if your brain need stimulation and proof of work
- - For good compression, better to use jpg than avif. avif will be orders of magnitude faster, however
+ - Uses a progress bar in command-line for proof of work (lol)
+ - Recommend using avif but png and jpg work as well 
     ```
     python3 compressor.py {path-to-image}
     ```
