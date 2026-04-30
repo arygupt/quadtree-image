@@ -125,7 +125,7 @@ def output_paths(input_path: str) -> tuple[str, str]:
     return str(compressed_path), str(decompressed_path)
 
 
-def main() -> None:
+def main():
     if len(sys.argv) != 2:
         raise SystemExit("Usage: python compressor.py path/to/image")
 
